@@ -136,10 +136,25 @@ export const UserContextProvider = ({ children }) => {
         withCredentials: true, // send cookies to the server
       });
 
+      // Fetch friend user objects for group chat creation
+      let friendsData = [];
+      if (res.data.friends && res.data.friends.length > 0) {
+        try {
+          const friendsRes = await Promise.all(
+            res.data.friends.map(friendId =>
+              axios.get(`${serverUrl}/api/v1/user/${friendId}`)
+            )
+          );
+          friendsData = friendsRes.map(r => r.data);
+        } catch (e) {
+          friendsData = [];
+        }
+      }
       setUser((prevState) => {
         return {
           ...prevState,
           ...res.data,
+          friendsData,
         };
       });
 

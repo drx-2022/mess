@@ -38,15 +38,15 @@ function SearchInput() {
   return (
     <form>
       <div className="relative">
-        <span className="absolute top-1/2 pl-4 text-[#aaa] translate-y-[-50%] text-xl">
+        <span className="absolute top-1/2 pl-3 md:pl-4 text-[#aaa] translate-y-[-50%] text-base md:text-xl">
           {searchIcon}
         </span>
         <input
           type="text"
           name="search"
           placeholder="Search here..."
-          className="w-full pl-12 pr-2 py-[0.65rem] bg-white dark:bg-transparent border-2 border-white
-            dark:border-[#3C3C3C]/60 dark:text-slate-300 rounded-xl text-gray-800  focus:outline-none focus:ring-2 focus:ring-[#ccc] focus:ring-opacity-50 transition duration-300 ease-in-out"
+          className="w-full pl-10 md:pl-12 pr-2 py-2 md:py-[0.65rem] bg-white dark:bg-transparent border-2 border-white
+            dark:border-[#3C3C3C]/60 dark:text-slate-300 rounded-lg md:rounded-xl text-gray-800 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-[#ccc] focus:ring-opacity-50 transition duration-300 ease-in-out"
           value={search}
           onChange={handleSearch}
         />

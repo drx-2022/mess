@@ -54,7 +54,7 @@ function TextArea() {
 
   return (
     <form
-      className="relative flex items-center"
+      className="relative flex items-center px-2 md:px-0"
       onSubmit={(e) => {
         e.preventDefault();
         sendMessage({
@@ -68,8 +68,8 @@ function TextArea() {
     >
       <div className="relative flex-1">
         <textarea
-          className="textarea w-full px-4 py-3 border-2 rounded-[30px] border-white bg-[#F6F5F9] dark:bg-[#262626] dark:text-gray-100 text-[#12181b] dark:border-[#3C3C3C]/65 
-          shadow-sm resize-none focus:outline-none focus:ring-2 focus:border-transparent focus:ring-[#ccc] focus:ring-opacity-50 transition duration-300 ease-in-out"
+          className="textarea w-full px-3 md:px-4 py-2 md:py-3 border-2 rounded-[20px] md:rounded-[30px] border-white bg-[#F6F5F9] dark:bg-[#262626] dark:text-gray-100 text-[#12181b] dark:border-[#3C3C3C]/65 
+          shadow-sm resize-none focus:outline-none focus:ring-2 focus:border-transparent focus:ring-[#ccc] focus:ring-opacity-50 transition duration-300 ease-in-out text-sm md:text-base"
           rows={1}
           value={message}
           ref={textAreaRef}
@@ -77,13 +77,13 @@ function TextArea() {
         ></textarea>
         <button
           type="button"
-          className="absolute top-[22px] right-3 text-[#aaa] translate-y-[-50%] text-2xl"
+          className="absolute top-[18px] md:top-[22px] right-3 text-[#aaa] translate-y-[-50%] text-xl md:text-2xl"
           onClick={handleToggleEmoji}
         >
           🥹
         </button>
         {!message && (
-          <span className="absolute text-sm top-[46%] left-4 text-[#aaa] translate-y-[-50%] pointer-events-none">
+          <span className="absolute text-xs md:text-sm top-[46%] left-4 text-[#aaa] translate-y-[-50%] pointer-events-none">
             Type a message...
           </span>
         )}
@@ -91,14 +91,14 @@ function TextArea() {
       <button
         type="submit"
         disabled={!message || !message.trim()}
-        className="px-4 self-start py-2 w-12 h-12 bg-[#7263f3] text-white rounded-full ml-2 shadow-sm"
+        className="px-3 md:px-4 self-start py-2 w-10 h-10 md:w-12 md:h-12 bg-[#7263f3] text-white rounded-full ml-2 shadow-sm flex items-center justify-center"
       >
         {send}
       </button>
       {toggleEmoji && (
         <div
           ref={emojieElemRef}
-          className="absolute right-0 bottom-[72px] z-10"
+          className="absolute right-0 bottom-[60px] md:bottom-[72px] z-10"
         >
           <EmojiPicker
             onEmojiClick={(emojiObject) => {

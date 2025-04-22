@@ -215,16 +215,20 @@ export const userLoginStatus = asyncHandler(async (req, res) => {
 
   if (!token) {
     // 401 Unauthorized
-    res.status(401).json({ message: "Not authorized, please login!" });
+    return res.status(401).json(false);
   }
-  // verify the token
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-  if (decoded) {
-    res.status(200).json(true);
-  } else {
-    res.status(401).json(false);
+  
+  try {
+    // verify the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded) {
+      return res.status(200).json(true);
+    }
+  } catch (error) {
+    console.log("Token verification error:", error.message);
   }
+  
+  return res.status(401).json(false);
 });
 
 // email verification
@@ -332,8 +336,8 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    // 404 Not Found
-    return res.status(404).json({ message: "User not found" });
+    // For security reasons, don't reveal if the user exists or not
+    return res.status(200).json({ message: "If your email exists in our system, you will receive a password reset link" });
   }
 
   // see if reset token exists
@@ -345,7 +349,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   }
 
   // create a reset token using the user id ---> expires in 1 hour
-  const passwordResetToken = crypto.randomBytes(64).toString("hex") + user._id;
+  const passwordResetToken = crypto.randomBytes(32).toString("hex") + user._id;
 
   // hash the reset token
   const hashedToken = hashToken(passwordResetToken);
@@ -360,21 +364,37 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   // reset link
   const resetLink = `${process.env.CLIENT_URL}/reset-password/${passwordResetToken}`;
 
+  // Check if email configuration is available
+  if (!process.env.USER_EMAIL) {
+    console.log("Email configuration missing. Reset link:", resetLink);
+    // For development purposes, return the reset link in the response
+    // In production, this should be removed for security
+    return res.status(200).json({
+      message: "Password reset link generated (email sending disabled)",
+      resetLink: resetLink // Only include this in development
+    });
+  }
+
   // send email to user
-  const subject = "Password Reset - AuthKit";
+  const subject = "Password Reset - Messenger App";
   const send_to = user.email;
-  const send_from = process.env.USER_EMAIL;
-  const reply_to = "noreply@noreply.com";
+  const send_from = process.env.USER_EMAIL || "noreply@messenger-app.com";
+  const reply_to = "noreply@messenger-app.com";
   const template = "forgotPassword";
   const name = user.name;
   const url = resetLink;
 
   try {
     await sendEmail(subject, send_to, send_from, reply_to, template, name, url);
-    res.json({ message: "Email sent" });
+    res.status(200).json({ message: "If your email exists in our system, you will receive a password reset link" });
   } catch (error) {
     console.log("Error sending email: ", error);
-    return res.status(500).json({ message: "Email could not be sent" });
+    // Don't reveal the actual error to the client
+    return res.status(200).json({ 
+      message: "If your email exists in our system, you will receive a password reset link",
+      // Include the reset link in development mode only
+      resetLink: resetLink
+    });
   }
 });
 

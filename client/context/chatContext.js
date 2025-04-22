@@ -260,6 +260,85 @@ export const ChatProvider = ({ children }) => {
     }
   };
 
+  // create a group chat
+  const createGroupChat = async (name, participants, groupAdmin) => {
+    try {
+      const res = await axios.post(`${serverUrl}/api/v1/group`, {
+        name,
+        participants,
+        groupAdmin,
+      });
+      setChats((prev) => [...prev, res.data]);
+      return res.data;
+    } catch (error) {
+      console.log("Error in createGroupChat", error.message);
+    }
+  };
+
+  // add users to group
+  const addToGroup = async (chatId, userIds) => {
+    try {
+      const res = await axios.put(`${serverUrl}/api/v1/group/add`, {
+        chatId,
+        userIds,
+      });
+      return res.data;
+    } catch (error) {
+      console.log("Error in addToGroup", error.message);
+    }
+  };
+
+  // remove user from group
+  const removeFromGroup = async (chatId, userId) => {
+    try {
+      const res = await axios.put(`${serverUrl}/api/v1/group/remove`, {
+        chatId,
+        userId,
+      });
+      return res.data;
+    } catch (error) {
+      console.log("Error in removeFromGroup", error.message);
+    }
+  };
+
+  // rename group
+  const renameGroup = async (chatId, name) => {
+    try {
+      const res = await axios.put(`${serverUrl}/api/v1/group/rename`, {
+        chatId,
+        name,
+      });
+      return res.data;
+    } catch (error) {
+      console.log("Error in renameGroup", error.message);
+    }
+  };
+
+  // transfer group admin
+  const transferAdmin = async (chatId, newAdminId) => {
+    try {
+      const res = await axios.put(`${serverUrl}/api/v1/group/transfer-admin`, {
+        chatId,
+        newAdminId,
+      });
+      return res.data;
+    } catch (error) {
+      console.log("Error in transferAdmin", error.message);
+    }
+  };
+
+
+  // get group details
+  const getGroupDetails = async (chatId) => {
+    try {
+      const res = await axios.get(`${serverUrl}/api/v1/group/${chatId}`);
+      return res.data;
+    } catch (error) {
+      console.log("Error in getGroupDetails", error.message);
+    }
+  };
+
+
   // logout user
   const logoutUser = async () => {
     try {
@@ -320,6 +399,11 @@ export const ChatProvider = ({ children }) => {
         socket,
         setOnlineUsers,
         createChat,
+        createGroupChat,
+        addToGroup,
+        removeFromGroup,
+        renameGroup,
+        getGroupDetails,
       }}
     >
       {children}

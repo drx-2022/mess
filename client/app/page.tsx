@@ -10,22 +10,50 @@ import { useChatContext } from "@/context/chatContext";
 import FriendProfile from "./Components/FriendProfile/FriendProfile";
 import Online from "./Components/Online/Online";
 import MainContent from "./Components/MainContent/MainContent";
+import MobileNav from "./Components/MobileNav/MobileNav";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   useRedirect("/login");
 
   const { currentView, showFriendProfile, showProfile } = useGlobalContext();
   const { selectedChat } = useChatContext();
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if the screen is mobile size
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Initial check
+    checkIfMobile();
+
+    // Add event listener for window resize
+    window.addEventListener("resize", checkIfMobile);
+
+    // Cleanup
+    return () => window.removeEventListener("resize", checkIfMobile);
+  }, []);
 
   return (
-    <div className="relative px-[10rem] py-10 h-full">
+    <div className="relative md:px-[5rem] lg:px-[10rem] py-4 md:py-10 h-full">
       <main
-        className="h-full flex backdrop-blur-sm rounded-3xl bg-white/65 dark:bg-[#262626]/90 border-2 border-white
+        className="h-full flex flex-col md:flex-row backdrop-blur-sm rounded-xl md:rounded-3xl bg-white/65 dark:bg-[#262626]/90 border-2 border-white
         dark:border-[#3C3C3C]/65 shadow-sm overflow-hidden"
       >
-        <Sidebar />
-        <div className="flex-1 flex">
-          <div className="relative flex-1 border-r-2 border-white dark:border-[#3C3C3C]/60">
+        {/* Mobile Navigation - only visible on small screens */}
+        <div className="md:hidden">
+          <MobileNav />
+        </div>
+
+        {/* Sidebar - hidden on mobile */}
+        <div className="hidden md:block">
+          <Sidebar />
+        </div>
+
+        <div className="flex-1 flex flex-col md:flex-row">
+          <div className="relative flex-1 border-r-0 md:border-r-2 border-white dark:border-[#3C3C3C]/60">
             {/* Default Content */}
             {!showProfile && !selectedChat && <MainContent />}
 
@@ -41,7 +69,9 @@ export default function Home() {
               </div>
             )}
           </div>
-          <div className="w-[30%]">
+          
+          {/* Online/Friend Profile Section - hidden on mobile unless explicitly shown */}
+          <div className="hidden md:block md:w-[30%] lg:w-[30%]">
             {!showFriendProfile && <Online />}
             {showFriendProfile && <FriendProfile />}
           </div>

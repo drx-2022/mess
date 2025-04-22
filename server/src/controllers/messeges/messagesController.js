@@ -17,6 +17,86 @@ export const createChat = expressAsyncHandler(async (req, res) => {
   }
 });
 
+// Create a group chat
+export const createGroupChat = expressAsyncHandler(async (req, res) => {
+  try {
+    const { name, participants, groupAdmin } = req.body;
+    if (!name || !participants || participants.length < 2) {
+      return res.status(400).json({ message: "Group name and at least 2 members are required" });
+    }
+    const groupChat = new Chat({
+      isGroup: true,
+      name,
+      participants,
+      groupAdmin,
+    });
+    const chat = await groupChat.save();
+    res.status(200).json(chat);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Add user(s) to group
+export const addToGroup = expressAsyncHandler(async (req, res) => {
+  try {
+    const { chatId, userIds } = req.body;
+    const chat = await Chat.findByIdAndUpdate(
+      chatId,
+      { $addToSet: { participants: { $each: userIds } } },
+      { new: true }
+    );
+    res.status(200).json(chat);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Remove user from group
+export const removeFromGroup = expressAsyncHandler(async (req, res) => {
+  try {
+    const { chatId, userId } = req.body;
+    const chat = await Chat.findByIdAndUpdate(
+      chatId,
+      { $pull: { participants: userId } },
+      { new: true }
+    );
+    res.status(200).json(chat);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Rename group
+export const renameGroup = expressAsyncHandler(async (req, res) => {
+  try {
+    const { chatId, name } = req.body;
+    const chat = await Chat.findByIdAndUpdate(
+      chatId,
+      { name },
+      { new: true }
+    );
+    res.status(200).json(chat);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get group chat details
+export const getGroupDetails = expressAsyncHandler(async (req, res) => {
+  try {
+    const chat = await Chat.findById(req.params.chatId)
+      .populate("participants", "_id name photo")
+      .populate("groupAdmin", "_id name photo");
+    if (!chat || !chat.isGroup) {
+      return res.status(404).json({ message: "Group chat not found" });
+    }
+    res.status(200).json(chat);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 export const getAllUserChats = expressAsyncHandler(async (req, res) => {
   try {
     const chat = await Chat.find({

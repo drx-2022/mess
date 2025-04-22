@@ -42,13 +42,16 @@ function page({ params: { resetToken } }: Props) {
 
   return (
     <main className="auth-page w-full h-full flex justify-center items-center">
-      <form className="m-[2rem] px-10 py-14 rounded-lg bg-white max-w-[520px] w-full">
+      <form className="reset-password-form relative m-[2rem] px-10 py-14 rounded-lg bg-white max-w-[520px] w-full">
         <div className="relative z-10">
           <h1 className="mb-2 text-center text-[1.35rem] font-medium">
-            Reset Your Password!
+            Reset Your Password
           </h1>
+          <p className="mb-8 px-[2rem] text-center text-[#999] text-[14px]">
+            Create a new strong password for your account
+          </p>
           <div className="relative mt-[1rem] flex flex-col">
-            <label htmlFor="email" className="mb-1 text-[#999]">
+            <label htmlFor="password" className="mb-1 text-[#999]">
               New Password
             </label>
             <input
@@ -73,15 +76,15 @@ function page({ params: { resetToken } }: Props) {
             </button>
           </div>
           <div className="relative mt-[1rem] flex flex-col">
-            <label htmlFor="email" className="mb-1 text-[#999]">
+            <label htmlFor="confirmPassword" className="mb-1 text-[#999]">
               Confirm Password
             </label>
             <input
               type={showPassword ? "text" : "password"}
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}
-              id="password"
-              name="password"
+              id="confirmPassword"
+              name="confirmPassword"
               placeholder="*********"
               className="px-4 py-3 border-[2px] rounded-md outline-[#2ECC71] text-gray-800"
             />
@@ -97,10 +100,19 @@ function page({ params: { resetToken } }: Props) {
               )}
             </button>
           </div>
+          <div className="mt-4 flex justify-end">
+            <a
+              href="/login"
+              className="font-bold text-[#2ECC71] text-[14px] hover:text-[#7263F3] transition-all duration-300"
+            >
+              Back to login
+            </a>
+          </div>
           <div className="flex">
             <button
               type="submit"
               onClick={handleSubmit}
+              disabled={!password || !confirmPassword}
               className="mt-[1.5rem] flex-1 px-4 py-3 font-bold bg-[#2ECC71] text-white rounded-md hover:bg-[#1abc9c] transition-colors"
             >
               Reset Password

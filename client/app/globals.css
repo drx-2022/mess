@@ -41,8 +41,8 @@ body {
   box-shadow: 2px 3px 15px rgba(0, 0, 0, 0.08);
 }
 
-.register-form,
-.forgot-password-form,
+.register-form > img,
+.forgot-password-form > img,
 .login-form > img {
   position: absolute;
   top: 0;

@@ -32,6 +32,9 @@ interface IChat {
   updatedAt: string;
   participantsData?: IUser[];
   _id: string;
+  isGroup?: boolean;
+  name?: string;
+  groupAdmin?: IUser | string;
 }
 
 export type { IUser, IMessage, IChat };
